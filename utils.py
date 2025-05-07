@@ -87,8 +87,8 @@ def softmax(Z):                                     #Z[k,m]
     return A
 
 def onehot(labels, label_num = 10):                 #labels[k,1]
-    Y = np.zeros((np.shape(labels)[0],label_num))   #Y[k,10]
-    for i in range(np.shape(labels)[0]):
+    Y = np.zeros((labels.shape[0],label_num))   #Y[k,10]
+    for i in range(labels.shape[0]):
         Y[i][labels[i][0]] = 1
     return Y
 
@@ -274,7 +274,7 @@ def he_uniform(weight : np.ndarray, a = 0, mode = 'in'):
         fan = weight.shape[0]
     else:
         fan = weight.shape[1]
-    range = np.sqrt(6/((1+np.pow(a,2))*fan))
+    range = np.sqrt(6/((1+a**2) * fan))
     weight[:] = np.random.uniform(-range,range,weight.shape)
 
 def he_normal(weight : np.ndarray, a = 0, mode = 'in'):
@@ -282,5 +282,5 @@ def he_normal(weight : np.ndarray, a = 0, mode = 'in'):
         fan = weight.shape[0]
     else:
         fan = weight.shape[1]
-    std = np.sqrt(2/((1+np.pow(a,2))*fan))
+    std = np.sqrt(2/((1+a**2) *fan))
     weight[:] = np.random.normal(0, std, weight.shape)
