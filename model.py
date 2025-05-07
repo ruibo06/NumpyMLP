@@ -14,8 +14,6 @@ class model:
             for param in layer.get_param() 
         ]
 
-        self.is_train = True
-
     def train(self):
         for layer in self.layers:
             if isinstance(layer, Dropout):
