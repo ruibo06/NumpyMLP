@@ -12,7 +12,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 y_train = np.reshape(y_train,(-1,1))
 y_test = np.reshape(y_test,(-1,1))
 
-MyModel = model(784)
+MyModel = model(784, 10)
 optimizer = AdamOptimizer(MyModel.parameters, lr=1e-3, weight_decay=1e-4)
 loss_fn = CrossEntropyLoss
 train_data = DataLoader(X_train, y_train, batchsize=64, shuffle=True)
@@ -21,7 +21,7 @@ for param in MyModel.parameters:
     if param.type == 'w':
         he_uniform(param.value)
 
-epochs = 30
+epochs = 20
 for epoch in range(epochs):
     print(f'epoch {epoch + 1}')
 

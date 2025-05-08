@@ -7,9 +7,10 @@ class param:
         self.grad = grad
 
 
-#k:样本数 n:输入向量长度 m:输出向量长度
+#k:样本数       n:输入向量长度  m:输出向量长度
+#X:输入向量     Z:输出向量      A:经过激活函数后的向量
 
-# 定义激活函数 Z[k,m]
+# 定义激活函数      Z[k,m]
 def relu(Z, backward = False): 
     mask = Z > 0
     if not backward:
@@ -51,7 +52,7 @@ activation_function_map = {
     "leakyrelu" : leakyrelu
 }
 
-#定义全连接层，X[k,n]
+#定义全连接层，     X[k,n]
 class FullyConnectedLayer: 
     def __init__(self, input_dim, output_dim, activation='relu'):
         W = np.random.randn(input_dim, output_dim) * 0.01
@@ -68,8 +69,8 @@ class FullyConnectedLayer:
     
     def backward(self, dA):                                                         #dA[k,m]
         dZ = dA * activation_function_map[self.activation](self.Z, backward = True) #dZ[k,m]   
-        self.W.grad= np.matmul(self.X.T, dZ) / self.X.shape[0]        #[n,k]*[k,m]   W_grad[n,m]
-        self.b.grad = np.sum(dZ, axis=0, keepdims=True) / self.X.shape[0]           #b_grad[1,m]
+        self.W.grad= np.matmul(self.X.T, dZ) / self.X.shape[0]              #[n,k]*[k,m]   W_grad[n,m]
+        self.b.grad = np.sum(dZ, axis=0, keepdims=True) / self.X.shape[0]   #b_grad[1,m]
         dX = np.matmul(dZ, self.W.value.T)                                  #[k,m]*[m,n]   dX[k,n]
 
         return dX
@@ -87,7 +88,7 @@ def softmax(Z):                                     #Z[k,m]
     return A
 
 def onehot(labels, label_num = 10):                 #labels[k,1]
-    Y = np.zeros((labels.shape[0],label_num))   #Y[k,10]
+    Y = np.zeros((labels.shape[0],label_num))       #Y[k,10]
     for i in range(labels.shape[0]):
         Y[i][labels[i][0]] = 1
     return Y
@@ -101,6 +102,7 @@ def CrossEntropyLoss(Y_predict, labels):
 
 class OutputLayer:
     def __init__(self, input_dim, output_dim):
+        self.output_dim = output_dim
         W = np.random.randn(input_dim, output_dim) * 0.01
         b = np.zeros((1, output_dim))
         self.W = param('w',W, np.zeros_like(W))
@@ -113,7 +115,7 @@ class OutputLayer:
         return self.A
     
     def backward(self, labels):
-        Y = onehot(labels)
+        Y = onehot(labels, label_num=self.output_dim)
         dZ = self.A - Y                 #dZ[k,m]
         self.W.grad = np.matmul(self.X.T, dZ) / self.X.shape[0]
         self.b.grad = np.sum(dZ, axis=0, keepdims=True) / self.X.shape[0]
@@ -130,7 +132,7 @@ class Dropout:
     def __init__(self, dropout):
         assert 0 <= dropout <= 1
         self.dropout = dropout
-        self.is_train = True
+        self.is_train = True        #is_train表示模型是否处于训练模式
     def forward(self, X):
         if not self.is_train:
             return X
@@ -206,7 +208,6 @@ class AdamOptimizer(Optimizer):
             self.state.append(np.zeros_like(parameter.grad))
 
     def step(self):
-
         self.beta1_t *= self.beta1
         self.beta2_t *= self.beta2                  #估计偏差修正
 
@@ -270,6 +271,7 @@ def xavier_normal(weight : np.ndarray, gain = 1):
     weight[:] = np.random.normal(0, std, weight.shape)
 
 def he_uniform(weight : np.ndarray, a = 0, mode = 'in'):
+    assert mode == 'in' or mode == 'out'
     if mode == 'in':
         fan = weight.shape[0]
     else:
@@ -278,6 +280,7 @@ def he_uniform(weight : np.ndarray, a = 0, mode = 'in'):
     weight[:] = np.random.uniform(-range,range,weight.shape)
 
 def he_normal(weight : np.ndarray, a = 0, mode = 'in'):
+    assert mode == 'in' or mode == 'out'
     if mode == 'in':
         fan = weight.shape[0]
     else:

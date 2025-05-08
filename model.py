@@ -1,12 +1,12 @@
 from utils import FullyConnectedLayer, OutputLayer, Dropout
 
 class model:
-    def __init__(self, input_dim):
+    def __init__(self, input_dim, output_dim):
         self.layers = [
             FullyConnectedLayer(input_dim,256, activation='relu'),
             Dropout(0.1),
             FullyConnectedLayer(256,128, activation='relu'),
-            OutputLayer(128,10)
+            OutputLayer(128,output_dim)
         ]  
         self.parameters = [
             param 
