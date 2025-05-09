@@ -7,8 +7,8 @@ class param:
         self.grad = grad
 
 
-#k:样本数       n:输入向量长度  m:输出向量长度
-#X:输入向量     Z:输出向量      A:经过激活函数后的向量
+#k:样本数       n:输入向量长度     m:输出向量长度
+#X:输入向量     Z:全连接层输出向量  A:激活函数输出向量
 
 # 定义激活函数      Z[k,m]
 def relu(Z, backward = False): 
@@ -59,20 +59,19 @@ class FullyConnectedLayer:
         b = np.zeros((1, output_dim))
         self.W = param('w',W, np.zeros_like(W))
         self.b = param('b',b, np.zeros_like(b))
-        self.activation = activation
+        self.activation = activation_function_map[activation]
 
     def forward(self, X):
         self.X = X
         self.Z = np.matmul(X, self.W.value) + self.b.value
-        A = activation_function_map[self.activation](self.Z)
+        A = self.activation(self.Z)
         return A
     
-    def backward(self, dA):                                                         #dA[k,m]
-        dZ = dA * activation_function_map[self.activation](self.Z, backward = True) #dZ[k,m]   
+    def backward(self, dA):                                                 #dA[k,m]
+        dZ = dA * self.activation(self.Z, backward = True)                  #dZ[k,m]   
         self.W.grad= np.matmul(self.X.T, dZ) / self.X.shape[0]              #[n,k]*[k,m]   W_grad[n,m]
         self.b.grad = np.sum(dZ, axis=0, keepdims=True) / self.X.shape[0]   #b_grad[1,m]
         dX = np.matmul(dZ, self.W.value.T)                                  #[k,m]*[m,n]   dX[k,n]
-
         return dX
     
     def get_param(self):
@@ -119,7 +118,6 @@ class OutputLayer:
         dZ = self.A - Y                 #dZ[k,m]
         self.W.grad = np.matmul(self.X.T, dZ) / self.X.shape[0]
         self.b.grad = np.sum(dZ, axis=0, keepdims=True) / self.X.shape[0]
-
         dX = np.matmul(dZ, self.W.value.T)
         return dX
     
