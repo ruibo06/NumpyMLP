@@ -1,7 +1,7 @@
 import numpy as np
 
 class param:
-    def __init__(self, type, value : np.ndarray, grad : np.ndarray):
+    def __init__(self, type, value: np.ndarray, grad: np.ndarray):
         self.type = type
         self.value = value
         self.grad = grad
@@ -86,10 +86,11 @@ def softmax(Z):                                     #Z[k,m]
     A = A / sum
     return A
 
-def onehot(labels, label_num = 10):                 #labels[k,1]
+def onehot(labels: np.ndarray, label_num = 10):                 #labels[k,1]
     Y = np.zeros((labels.shape[0],label_num))       #Y[k,10]
-    for i in range(labels.shape[0]):
-        Y[i][labels[i][0]] = 1
+    idx1 = np.arange(labels.shape[0])
+    idx2 = labels.squeeze()
+    Y[idx1, idx2] = 1
     return Y
 
 def CrossEntropyLoss(Y_predict, labels):
@@ -189,7 +190,7 @@ class MomentumOptimizer(Optimizer):
             self.parameters[i].value -= self.lr * self.velocity[i]
 
 class AdamOptimizer(Optimizer):
-    def __init__(self, parameters, lr, beta1 = 0.9, beta2 = 0.999, weight_decay=0., eps = 1e-6):
+    def __init__(self, parameters, lr, beta1 = 0.9, beta2 = 0.999, weight_decay = 0., eps = 1e-6):
         super().__init__(parameters, lr, weight_decay)
         self.beta1 = beta1
         self.beta2 = beta2
@@ -260,15 +261,15 @@ class DataLoader:
 
 
 #Xavier和He参数初始化
-def xavier_uniform(weight : np.ndarray, gain = 1):
+def xavier_uniform(weight: np.ndarray, gain = 1):
     range = gain * np.sqrt(6/(weight.shape[0] + weight.shape[1]))
     weight[:] = np.random.uniform(-range,range,weight.shape)
 
-def xavier_normal(weight : np.ndarray, gain = 1):
+def xavier_normal(weight: np.ndarray, gain = 1):
     std = gain * np.sqrt(2/(weight.shape[0] + weight.shape[1]))
     weight[:] = np.random.normal(0, std, weight.shape)
 
-def he_uniform(weight : np.ndarray, a = 0, mode = 'in'):
+def he_uniform(weight: np.ndarray, a = 0, mode = 'in'):
     assert mode == 'in' or mode == 'out'
     if mode == 'in':
         fan = weight.shape[0]
@@ -277,7 +278,7 @@ def he_uniform(weight : np.ndarray, a = 0, mode = 'in'):
     range = np.sqrt(6/((1+a**2) * fan))
     weight[:] = np.random.uniform(-range,range,weight.shape)
 
-def he_normal(weight : np.ndarray, a = 0, mode = 'in'):
+def he_normal(weight: np.ndarray, a = 0, mode = 'in'):
     assert mode == 'in' or mode == 'out'
     if mode == 'in':
         fan = weight.shape[0]
