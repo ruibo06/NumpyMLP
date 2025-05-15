@@ -189,7 +189,7 @@ class MomentumOptimizer(Optimizer):
             self.parameters[i].value -= self.lr * self.velocity[i]
 
 class AdamOptimizer(Optimizer):
-    def __init__(self, parameters, lr, beta1 = 0.9, beta2 = 0.999, weight_decay=0, eps = 1e-6):
+    def __init__(self, parameters, lr, beta1 = 0.9, beta2 = 0.999, weight_decay=0., eps = 1e-6):
         super().__init__(parameters, lr, weight_decay)
         self.beta1 = beta1
         self.beta2 = beta2
@@ -251,7 +251,7 @@ class DataLoader:
             else:
                 end = self.end
             self.current += self.batchsize
-            return {'data':self.X[start:end][:], 'target':self.y[start:end][:]}
+            return {'data':self.X[start:end, :], 'target':self.y[start:end, :]}
         else:
             raise StopIteration
         
