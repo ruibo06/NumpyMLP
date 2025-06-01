@@ -262,8 +262,8 @@ class DataLoader:
 
 #Xavier和He参数初始化
 def xavier_uniform(weight: np.ndarray, gain = 1):
-    range = gain * np.sqrt(6/(weight.shape[0] + weight.shape[1]))
-    weight[:] = np.random.uniform(-range,range,weight.shape)
+    limit = gain * np.sqrt(6/(weight.shape[0] + weight.shape[1]))
+    weight[:] = np.random.uniform(-limit,limit,weight.shape)
 
 def xavier_normal(weight: np.ndarray, gain = 1):
     std = gain * np.sqrt(2/(weight.shape[0] + weight.shape[1]))
@@ -275,8 +275,8 @@ def he_uniform(weight: np.ndarray, a = 0, mode = 'in'):
         fan = weight.shape[0]
     else:
         fan = weight.shape[1]
-    range = np.sqrt(6/((1+a**2) * fan))
-    weight[:] = np.random.uniform(-range,range,weight.shape)
+    limit = np.sqrt(6/((1+a**2) * fan))
+    weight[:] = np.random.uniform(-limit,limit,weight.shape)
 
 def he_normal(weight: np.ndarray, a = 0, mode = 'in'):
     assert mode == 'in' or mode == 'out'
