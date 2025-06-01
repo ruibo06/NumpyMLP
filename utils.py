@@ -141,11 +141,19 @@ class Dropout:
             elif self.dropout == 1:
                 return np.zeros_like(X)
             else:
-                mask = np.random.rand(*X.shape) > self.dropout
-                return X * mask / (1 - self.dropout)
+                self.mask = np.random.rand(*X.shape) > self.dropout
+                return X * self.mask / (1 - self.dropout)
             
     def backward(self, dX):
-        return dX
+        if not self.is_train:
+            return dX
+        else:
+            if self.dropout == 0:
+                return dX
+            elif self.dropout == 1:
+                return np.zeros_like(dX)
+            else:
+                return dX * self.mask / (1 - self.dropout)
     
     
 #定义优化器

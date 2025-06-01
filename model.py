@@ -4,7 +4,7 @@ class model:
     def __init__(self, input_dim, output_dim):
         self.layers = [
             FullyConnectedLayer(input_dim,256, activation='relu'),
-            Dropout(0.1),
+            Dropout(0.2),
             FullyConnectedLayer(256,128, activation='relu'),
             OutputLayer(128,output_dim)
         ]  
